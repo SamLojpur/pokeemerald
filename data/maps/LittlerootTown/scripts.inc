@@ -393,11 +393,19 @@ LittlerootTown_EventScript_GoSaveBirchTrigger::
 	end
 
 LittlerootTown_EventScript_TownSign::
-	msgbox LittlerootTown_Text_TownSign, MSGBOX_SIGN
+	trainerbattle_no_intro TRAINER_GRUNT_PETALBURG_WOODS, PetalburgWoods_Text_YoureKiddingMe
+	; msgbox LittlerootTown_Text_TownSign, MSGBOX_SIGN
 	end
 
 LittlerootTown_EventScript_BirchsLabSign::
-	msgbox LittlerootTown_Text_ProfBirchsLab, MSGBOX_SIGN
+	walk_left
+	walk_down
+	walk_left
+	walk_left
+	walk_left
+	walk_in_place_faster_down
+	step_end
+	; msgbox LittlerootTown_Text_ProfBirchsLab, MSGBOX_SIGN
 	end
 
 LittlerootTown_EventScript_BrendansHouseSign::

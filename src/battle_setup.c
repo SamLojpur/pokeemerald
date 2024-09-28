@@ -350,7 +350,6 @@ static const u16 sBadgeFlags[NUM_BADGES] =
 static void Task_BattleStart(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
-
     switch (tState)
     {
     case 0:
@@ -364,6 +363,7 @@ static void Task_BattleStart(u8 taskId)
     case 1:
         if (IsBattleTransitionDone() == TRUE)
         {
+            DebugPrintf("BattleStart");
             CleanupOverworldWindowsAndTilemaps();
             SetMainCallback2(CB2_InitBattle);
             RestartWildEncounterImmunitySteps();
@@ -1101,6 +1101,7 @@ void SetMapVarsToTrainer(void)
 
 const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
 {
+    //TTrainerBattle
     InitTrainerBattleVariables();
     sTrainerBattleMode = TrainerBattleLoadArg8(data);
 
@@ -1270,6 +1271,7 @@ void ClearTrainerFlag(u16 trainerId)
 
 void BattleSetup_StartTrainerBattle(void)
 {
+    //DoTrainerBattle
     if (gNoOfApproachingTrainers == 2)
         gBattleTypeFlags = (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_TRAINER);
     else

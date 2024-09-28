@@ -12,6 +12,9 @@
 #include "task.h"
 #include "util.h"
 #include "constants/abilities.h"
+#include "battle_tower.h"
+#include "battle_factory.h"
+#include "constants/battle_frontier_mons.h"
 
 static EWRAM_DATA u8 sLinkSendTaskId = 0;
 static EWRAM_DATA u8 sLinkReceiveTaskId = 0;
@@ -59,13 +62,47 @@ void SetUpBattleVarsAndBirchZigzagoon(void)
     ClearBattleMonForms();
     BattleAI_HandleItemUseBeforeAISetup(0xF);
 
-    if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
-    {
-        ZeroEnemyPartyMons();
-        CreateMon(&gEnemyParty[0], SPECIES_ZIGZAGOON, 2, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
-        i = 0;
-        SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &i);
-    }
+    //lojpur starter
+    
+    // CreateMon(&gPlayerParty[0], SPECIES_SHEDINJA, 10, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
+
+    CreateMonWithEVSpreadNatureOTID(&gPlayerParty[0],
+                                            gBattleFrontierMons[FRONTIER_MON_SEVIPER_1].species,
+                                            100,
+                                            gBattleFrontierMons[FRONTIER_MON_SEVIPER_1].nature,
+                                            31,
+                                            gBattleFrontierMons[FRONTIER_MON_SEVIPER_1].evSpread,
+                                            OT_ID_PLAYER_ID);
+    for (i = 0; i < MAX_MON_MOVES; i++)
+        SetMonMoveAvoidReturn(&gPlayerParty[0], gBattleFrontierMons[FRONTIER_MON_SEVIPER_1].moves[i], i);
+    ZeroEnemyPartyMons();
+    CreateMonWithEVSpreadNatureOTID(&gEnemyParty[0],
+                                    gBattleFrontierMons[FRONTIER_MON_ZANGOOSE_1].species,
+                                    100,
+                                    gBattleFrontierMons[FRONTIER_MON_ZANGOOSE_1].nature,
+                                    31,
+                                    gBattleFrontierMons[FRONTIER_MON_ZANGOOSE_1].evSpread,
+                                    OT_ID_PLAYER_ID);
+    for (i = 0; i < MAX_MON_MOVES; i++)
+        SetMonMoveAvoidReturn(&gEnemyParty[0], gBattleFrontierMons[FRONTIER_MON_ZANGOOSE_1].moves[i], i);
+
+
+    // CreateMon(&gPlayerParty[0],
+    //             gFacilityTrainerMons[FRONTIER_MON_SEVIPER_1].species,
+    //             100,
+    //             31,
+    //             TRUE, gFacilityTrainerMons[FRONTIER_MON_SEVIPER_1].personality,
+    //                 OT_ID_PLAYER_ID, 0);
+
+    // if (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE)
+    // {
+    //     u32 a = 42;
+    //     DebugPrintf("a = %d. But also a = 0x%x", a, a);
+    //     ZeroEnemyPartyMons();
+    //     // CreateMon(&gEnemyParty[0], SPECIES_ZIGZAGOON, 2, USE_RANDOM_IVS, 0, 0, OT_ID_PLAYER_ID, 0);
+    //     i = 0;
+    //     SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &i);
+    // }
 
     // Below are never read
     gUnusedFirstBattleVar1 = 0;
@@ -1150,7 +1187,7 @@ void BtlController_EmitYesNoBox(u8 bufferId)
 void BtlController_EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData)
 {
     s32 i;
-
+    DebugPrintf("BtlController_EmitChooseMove");
     sBattleBuffersTransferData[0] = CONTROLLER_CHOOSEMOVE;
     sBattleBuffersTransferData[1] = isDoubleBattle;
     sBattleBuffersTransferData[2] = NoPpNumber;

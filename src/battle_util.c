@@ -81,6 +81,9 @@ void HandleAction_UseMove(void)
     u8 var = 4;
 
     gBattlerAttacker = gBattlerByTurnOrder[gCurrentTurnActionNumber];
+    DebugPrintf("HandleAction_UseMove %d");
+    DebugPrintf("I think this is where I enter for a sim :)");
+
 
     if (*(&gBattleStruct->absentBattlerFlags) & gBitTable[gBattlerAttacker])
     {
@@ -845,6 +848,7 @@ static void UNUSED MarkAllBattlersForControllerExec(void)
 
 void MarkBattlerForControllerExec(u8 battlerId)
 {
+    DebugPrintf("MarkBattlerForControllerExec %04x", gBattleControllerExecFlags);
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
         gBattleControllerExecFlags |= gBitTable[battlerId] << (32 - MAX_BATTLERS_COUNT);
     else
@@ -1447,6 +1451,7 @@ enum
 u8 DoBattlerEndTurnEffects(void)
 {
     u8 effect = 0;
+    DebugPrintf("DoBattlerEndTurnEffects");
 
     gHitMarker |= (HITMARKER_GRUDGE | HITMARKER_IGNORE_BIDE);
     while (gBattleStruct->turnEffectsBattlerId < gBattlersCount && gBattleStruct->turnEffectsTracker <= ENDTURN_BATTLER_COUNT)
@@ -3804,6 +3809,7 @@ void ClearFuryCutterDestinyBondGrudge(u8 battlerId)
 
 void HandleAction_RunBattleScript(void) // identical to RunBattleScriptCommands
 {
+    // DebugPrintf("HandleAction_RunBattleScript %016x", *gBattlescriptCurrInstr);
     if (gBattleControllerExecFlags == 0)
         gBattleScriptingCommandsTable[*gBattlescriptCurrInstr]();
 }

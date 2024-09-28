@@ -2196,6 +2196,7 @@ void CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFix
 {
     u32 mail;
     ZeroMonData(mon);
+    DebugPrintf("Creating mon with species ID: %d", species);
     CreateBoxMon(&mon->box, species, level, fixedIV, hasFixedPersonality, fixedPersonality, otIdType, fixedOtId);
     SetMonData(mon, MON_DATA_LEVEL, &level);
     mail = MAIL_NONE;
@@ -3125,6 +3126,22 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     defense = defender->defense;
     spAttack = attacker->spAttack;
     spDefense = defender->spDefense;
+
+    DebugPrintf("attack %d", attacker->attack);
+    DebugPrintf("defense %d", attacker->defense);
+    DebugPrintf("spAttack %d", attacker->spAttack);
+    DebugPrintf("spDefense %d", attacker->spDefense);
+    DebugPrintf("hp %d", attacker->hp);
+    DebugPrintf("speed %d", attacker->speed);
+    DebugPrintf("species %d", attacker->species);
+
+    DebugPrintf("attack %d", defender->attack);
+    DebugPrintf("defense %d", defender->defense);
+    DebugPrintf("spAttack %d", defender->spAttack);
+    DebugPrintf("spDefense %d", defender->spDefense);
+    DebugPrintf("hp %d", defender->hp);
+    DebugPrintf("speed %d", defender->speed);
+    DebugPrintf("species %d", defender->species);
 
     // Get attacker hold item info
     if (attacker->item == ITEM_ENIGMA_BERRY)

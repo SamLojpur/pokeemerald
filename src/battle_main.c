@@ -60,6 +60,8 @@
 #include "constants/songs.h"
 #include "constants/trainers.h"
 #include "cable_club.h"
+#include "constants/battle_frontier_mons.h"
+#include "battle_factory.h"
 
 extern const struct BgTemplate gBattleBgTemplates[];
 extern const struct WindowTemplate *const gBattleWindowTemplates[];
@@ -535,6 +537,7 @@ const struct TrainerMoney gTrainerMoneyTable[] =
 
 static void (* const sTurnActionsFuncsTable[])(void) =
 {
+    // Turn table used by RunTurnActionsFunctions
     [B_ACTION_USE_MOVE]               = HandleAction_UseMove,
     [B_ACTION_USE_ITEM]               = HandleAction_UseItem,
     [B_ACTION_SWITCH]                 = HandleAction_Switch,
@@ -592,7 +595,7 @@ void CB2_InitBattle(void)
     AllocateBattleSpritesData();
     AllocateMonSpritesGfx();
     RecordedBattle_ClearFrontierPassFlag();
-
+    DebugPrintf("InitBattle");
     if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
     {
         if (gBattleTypeFlags & BATTLE_TYPE_RECORDED)
@@ -958,6 +961,8 @@ static void CB2_HandleStartBattle(void)
     RunTasks();
     AnimateSprites();
     BuildOamBuffer();
+
+    DebugPrintf("CB2_HandleStartBattle %d, %d", gBattleCommunication[MULTIUSE_STATE], gReceivedRemoteLinkPlayers);
 
     playerMultiplayerId = GetMultiplayerId();
     gBattleScripting.multiplayerId = playerMultiplayerId;
@@ -1866,6 +1871,8 @@ void BattleMainCB2(void)
     UpdatePaletteFade();
     RunTasks();
 
+    // DebugPrintf("BattleMainCB2");
+
     if (JOY_HELD(B_BUTTON) && gBattleTypeFlags & BATTLE_TYPE_RECORDED && RecordedBattle_CanStopPlayback())
     {
         // Player pressed B during recorded battle playback, end battle
@@ -2053,15 +2060,28 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum, bool8 fir
 
                 personalityValue += nameHash << 8;
                 fixedIV = partyData[i].iv * MAX_PER_STAT_IVS / 255;
-                CreateMon(&party[i], partyData[i].species, partyData[i].lvl, fixedIV, TRUE, personalityValue, OT_ID_RANDOM_NO_SHINY, 0);
+                // CreateMon(&party[i], partyData[i].species, partyData[i].lvl, fixedIV, TRUE, personalityValue, OT_ID_RANDOM_NO_SHINY, 0);
 
-                SetMonData(&party[i], MON_DATA_HELD_ITEM, &partyData[i].heldItem);
+                // SetMonData(&party[i], MON_DATA_HELD_ITEM, &partyData[i].heldItem);
+
+                // for (j = 0; j < MAX_MON_MOVES; j++)
+                // {
+                //     SetMonData(&party[i], MON_DATA_MOVE1 + j, &partyData[i].moves[j]);
+                //     SetMonData(&party[i], MON_DATA_PP1 + j, &gBattleMoves[partyData[i].moves[j]].pp);
+                // }
+
+        CreateMonWithEVSpreadNatureOTID(&party[i],
+                                             gBattleFrontierMons[FRONTIER_MON_ZANGOOSE_1].species,
+                                             100,
+                                             gBattleFrontierMons[FRONTIER_MON_ZANGOOSE_1].nature,
+                                             3,
+                                             gBattleFrontierMons[FRONTIER_MON_ZANGOOSE_1].evSpread,
+                                             0);
 
                 for (j = 0; j < MAX_MON_MOVES; j++)
-                {
-                    SetMonData(&party[i], MON_DATA_MOVE1 + j, &partyData[i].moves[j]);
-                    SetMonData(&party[i], MON_DATA_PP1 + j, &gBattleMoves[partyData[i].moves[j]].pp);
-                }
+                    SetMonMoveAvoidReturn(&party[i], gBattleFrontierMons[FRONTIER_MON_ZANGOOSE_1].moves[j], j);
+
+
                 break;
             }
             }
@@ -3815,6 +3835,7 @@ static void TryDoEventsBeforeFirstTurn(void)
     s32 i;
     s32 j;
     u8 effect = 0;
+    DebugPrintf("TryDoEventsBeforeFirstTurn");
 
     if (gBattleControllerExecFlags)
         return;
@@ -3928,6 +3949,7 @@ static void HandleEndTurn_ContinueBattle(void)
 void BattleTurnPassed(void)
 {
     s32 i;
+    DebugPrintf("BattleTurnPassed");
 
     TurnValuesCleanUp(TRUE);
     if (gBattleOutcome == 0)
@@ -3964,7 +3986,7 @@ void BattleTurnPassed(void)
         return;
     }
 
-    if (gBattleResults.battleTurnCounter < 0xFF)
+    if (gBattleResults.battleTurnCounter < 255)
     {
         gBattleResults.battleTurnCounter++;
         gBattleStruct->arenaTurnCounter++;
@@ -4101,6 +4123,7 @@ enum
 static void HandleTurnActionSelectionState(void)
 {
     s32 i;
+    // DebugPrintf("HandleTurnActionSelectionState");
 
     gBattleCommunication[ACTIONS_CONFIRMED_COUNT] = 0;
     for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)
@@ -4153,6 +4176,7 @@ static void HandleTurnActionSelectionState(void)
                 switch (gBattleBufferB[gActiveBattler][1])
                 {
                 case B_ACTION_USE_MOVE:
+                    DebugPrintf("B_ACTION_USE_MOVE");
                     if (AreAllMovesUnusable())
                     {
                         gBattleCommunication[gActiveBattler] = STATE_SELECTION_SCRIPT;
@@ -4191,6 +4215,7 @@ static void HandleTurnActionSelectionState(void)
                     }
                     break;
                 case B_ACTION_USE_ITEM:
+                    DebugPrintf("B_ACTION_USE_ITEM");
                     if (gBattleTypeFlags & (BATTLE_TYPE_LINK
                                             | BATTLE_TYPE_FRONTIER_NO_PYRAMID
                                             | BATTLE_TYPE_EREADER_TRAINER
@@ -4329,6 +4354,7 @@ static void HandleTurnActionSelectionState(void)
                 switch (gChosenActionByBattler[gActiveBattler])
                 {
                 case B_ACTION_USE_MOVE:
+                    DebugPrintf("STATE_WAIT_ACTION_CASE_CHOSEN B_ACTION_USE_MOVE");
                     switch (gBattleBufferB[gActiveBattler][1])
                     {
                     case 3:
@@ -4376,6 +4402,7 @@ static void HandleTurnActionSelectionState(void)
                     }
                     break;
                 case B_ACTION_USE_ITEM:
+                    DebugPrintf("STATE_WAIT_ACTION_CASE_CHOSEN B_ACTION_USE_ITEM");
                     if ((gBattleBufferB[gActiveBattler][1] | (gBattleBufferB[gActiveBattler][2] << 8)) == 0)
                     {
                         gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
@@ -4908,6 +4935,8 @@ static void RunTurnActionsFunctions(void)
 {
     if (gBattleOutcome != 0)
         gCurrentActionFuncId = B_ACTION_FINISHED;
+
+    // DebugPrintf("RunTurnActionsFunctions %d", gCurrentActionFuncId);
 
     *(&gBattleStruct->savedTurnActionNumber) = gCurrentTurnActionNumber;
     sTurnActionsFuncsTable[gCurrentActionFuncId]();

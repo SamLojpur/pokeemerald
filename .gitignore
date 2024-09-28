@@ -38,3 +38,5 @@ prefabs.json
 *.diff
 *.sym
 *.js
+node_modules/
+pokeemerald-expansion/

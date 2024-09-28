@@ -48,6 +48,7 @@ gBattleAI_ScriptsTable::
 	.4byte AI_Safari                @ AI_SCRIPT_SAFARI
 	.4byte AI_FirstBattle           @ AI_SCRIPT_FIRST_BATTLE
 
+// Check bad move
 AI_CheckBadMove:
 	if_target_is_ally AI_Ret
 	if_move MOVE_FISSURE, AI_CBM_CheckIfNegatesType

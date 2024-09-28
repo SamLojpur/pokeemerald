@@ -400,6 +400,8 @@ static u8 ChooseMoveOrAction_Singles(void)
     u8 numOfBestMoves;
     s32 i;
 
+    // AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_VIABILITY | AI_SCRIPT_TRY_TO_FAINT;
+
     RecordLastUsedMoveByTarget();
 
     while (AI_THINKING_STRUCT->aiFlags != 0)
@@ -423,9 +425,12 @@ static u8 ChooseMoveOrAction_Singles(void)
     numOfBestMoves = 1;
     currentMoveArray[0] = AI_THINKING_STRUCT->score[0];
     consideredMoveArray[0] = 0;
+    DebugPrintf("consideredMoveArray %d, %S, %d ",0,  gMoveNames[gBattleMons[sBattler_AI].moves[0]], AI_THINKING_STRUCT->score[0]);
 
     for (i = 1; i < MAX_MON_MOVES; i++)
     {
+    DebugPrintf("consideredMoveArray %d, %S, %d ",i,  gMoveNames[gBattleMons[sBattler_AI].moves[i]], AI_THINKING_STRUCT->score[i]);
+
         if (gBattleMons[sBattler_AI].moves[i] != MOVE_NONE)
         {
             // In ruby, the order of these if statements is reversed.
@@ -442,6 +447,8 @@ static u8 ChooseMoveOrAction_Singles(void)
             }
         }
     }
+
+
     return consideredMoveArray[Random() % numOfBestMoves];
 }
 
@@ -992,6 +999,9 @@ static void Cmd_if_move(void)
 {
     u16 move = T1_READ_16(gAIScriptPtr + 1);
 
+    DebugPrintf("Cmd_if_move %S, %d ", gMoveNames[AI_THINKING_STRUCT->moveConsidered], AI_THINKING_STRUCT->moveConsidered == move);
+
+
     if (AI_THINKING_STRUCT->moveConsidered == move)
         gAIScriptPtr = T1_READ_PTR(gAIScriptPtr + 3);
     else
@@ -1176,6 +1186,9 @@ static void Cmd_get_how_powerful_move_is(void)
     s32 i, checkedMove;
     s32 moveDmgs[MAX_MON_MOVES];
 
+    DebugPrintf("Cmd_get_how_powerful_move_is %S, %010x", gMoveNames[AI_THINKING_STRUCT->moveConsidered], gAIScriptPtr);
+
+
     for (i = 0; sIgnoredPowerfulMoveEffects[i] != IGNORED_MOVES_END; i++)
     {
         if (gBattleMoves[AI_THINKING_STRUCT->moveConsidered].effect == sIgnoredPowerfulMoveEffects[i])
@@ -1195,6 +1208,9 @@ static void Cmd_get_how_powerful_move_is(void)
         // Check all other moves and calculate their power
         for (checkedMove = 0; checkedMove < MAX_MON_MOVES; checkedMove++)
         {
+            // DebugPrintf("Cmd_get_how_powerful_move_is %d", gBattleMons[sBattler_AI].moves[checkedMove]);
+            // DebugPrintf("Cmd_get_how_powerful_move_is %S", gMoveNames[gBattleMons[sBattler_AI].moves[checkedMove]]);
+
             for (i = 0; sIgnoredPowerfulMoveEffects[i] != IGNORED_MOVES_END; i++)
             {
                 if (gBattleMoves[gBattleMons[sBattler_AI].moves[checkedMove]].effect == sIgnoredPowerfulMoveEffects[i])
@@ -1208,6 +1224,8 @@ static void Cmd_get_how_powerful_move_is(void)
                 gCurrentMove = gBattleMons[sBattler_AI].moves[checkedMove];
                 AI_CalcDmg(sBattler_AI, gBattlerTarget);
                 TypeCalc(gCurrentMove, sBattler_AI, gBattlerTarget);
+                DebugPrintf("gBattleMoveDamage %S, %d",gMoveNames[gBattleMons[sBattler_AI].moves[checkedMove]], gBattleMoveDamage);
+
                 moveDmgs[checkedMove] = gBattleMoveDamage * AI_THINKING_STRUCT->simulatedRNG[checkedMove] / 100;
                 if (moveDmgs[checkedMove] == 0)
                     moveDmgs[checkedMove] = 1;
@@ -1525,6 +1543,7 @@ static void Cmd_if_type_effectiveness(void)
     gBattleMoveDamage = AI_EFFECTIVENESS_x1;
     gCurrentMove = AI_THINKING_STRUCT->moveConsidered;
 
+
     // TypeCalc does not assign to gMoveResultFlags, Cmd_typecalc does
     // This makes the check for gMoveResultFlags below always fail
     // This is how you get the "dual non-immunity" glitch, where AI
@@ -1535,6 +1554,7 @@ static void Cmd_if_type_effectiveness(void)
 #else
     TypeCalc(gCurrentMove, sBattler_AI, gBattlerTarget);
 #endif
+
 
     if (gBattleMoveDamage == 120) // Super effective STAB.
         gBattleMoveDamage = AI_EFFECTIVENESS_x2;
@@ -1550,6 +1570,9 @@ static void Cmd_if_type_effectiveness(void)
 
     // Store gBattleMoveDamage in a u8 variable because gAIScriptPtr[1] is a u8.
     damageVar = gBattleMoveDamage;
+
+        DebugPrintf("Cmd_if_type_effectiveness %S, %d, %d", gMoveNames[gCurrentMove], gBattleMoveDamage);
+
 
     if (damageVar == gAIScriptPtr[1])
         gAIScriptPtr = T1_READ_PTR(gAIScriptPtr + 2);

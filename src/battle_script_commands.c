@@ -915,6 +915,7 @@ static const u8 sBattlePalaceNatureToFlavorTextId[NUM_NATURES] =
 static void Cmd_attackcanceler(void)
 {
     s32 i;
+    DebugPrintf("Cmd_attackcanceler");
 
     if (gBattleOutcome != 0)
     {
@@ -1099,6 +1100,7 @@ static bool8 AccuracyCalcHelper(u16 move)
 static void Cmd_accuracycheck(void)
 {
     u16 move = T2_READ_16(gBattlescriptCurrInstr + 5);
+    DebugPrintf("Cmd_accuracycheck");
 
     if (move == NO_ACC_CALC || move == NO_ACC_CALC_CHECK_LOCK_ON)
     {
@@ -1190,6 +1192,8 @@ static void Cmd_accuracycheck(void)
 
 static void Cmd_attackstring(void)
 {
+    DebugPrintf("Cmd_attackstring");
+
     if (gBattleControllerExecFlags)
         return;
 
@@ -1205,6 +1209,7 @@ static void Cmd_attackstring(void)
 static void Cmd_ppreduce(void)
 {
     s32 ppToDeduct = 1;
+    DebugPrintf("Cmd_ppreduce");
 
     if (gBattleControllerExecFlags)
         return;
@@ -1255,6 +1260,8 @@ static void Cmd_critcalc(void)
     u8 holdEffect;
     u16 item, critChance;
 
+    DebugPrintf("Cmd_critcalc");
+
     item = gBattleMons[gBattlerAttacker].item;
 
     if (item == ITEM_ENIGMA_BERRY)
@@ -1290,6 +1297,8 @@ static void Cmd_critcalc(void)
 static void Cmd_damagecalc(void)
 {
     u16 sideStatus = gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)];
+    DebugPrintf("Cmd_damagecalc");
+
     gBattleMoveDamage = CalculateBaseDamage(&gBattleMons[gBattlerAttacker], &gBattleMons[gBattlerTarget], gCurrentMove,
                                             sideStatus, gDynamicBasePower,
                                             gBattleStruct->dynamicMoveType, gBattlerAttacker, gBattlerTarget);
@@ -1356,6 +1365,7 @@ static void Cmd_typecalc(void)
 {
     s32 i = 0;
     u8 moveType;
+    DebugPrintf("Cmd_typecalc");
 
     if (gCurrentMove == MOVE_STRUGGLE)
     {
@@ -1658,6 +1668,7 @@ static void UNUSED Unused_ApplyRandomDmgMultiplier(void)
 static void Cmd_adjustnormaldamage(void)
 {
     u8 holdEffect, param;
+    DebugPrintf("Cmd_adjustnormaldamage");
 
     ApplyRandomDmgMultiplier();
 
@@ -1703,6 +1714,7 @@ static void Cmd_adjustnormaldamage2(void)
     u8 holdEffect, param;
 
     ApplyRandomDmgMultiplier();
+    DebugPrintf("Cmd_adjustnormaldamage2");
 
     if (gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY)
     {
@@ -1742,6 +1754,7 @@ static void Cmd_adjustnormaldamage2(void)
 
 static void Cmd_attackanimation(void)
 {
+    DebugPrintf("Cmd_attackanimation");
     if (gBattleControllerExecFlags)
         return;
 

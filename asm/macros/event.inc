@@ -772,6 +772,7 @@
 	.endm
 
 	@ Starts a trainer battle, skipping intro text. Takes a trainer and loss text
+	@ Maybe I make a new script here?
 	.macro trainerbattle_no_intro trainer:req, lose_text:req
 	trainerbattle TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT, \trainer, 0, \lose_text
 	.endm
@@ -779,6 +780,7 @@
 
 	@ Starts a trainer battle using the battle information stored in RAM (usually by the scripts in trainer_battle.inc, which
 	@ are run by trainerbattle), and blocks script execution until the battle finishes.
+	@ or here
 	.macro dotrainerbattle
 	.byte 0x5d
 	.endm

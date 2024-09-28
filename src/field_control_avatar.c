@@ -667,6 +667,7 @@ void RestartWildEncounterImmunitySteps(void)
 
 static bool8 CheckStandardWildEncounter(u16 metatileBehavior)
 {
+    // DebugPrintf("CheckStandardWildEncounter");
     if (sWildEncounterImmunitySteps < 4)
     {
         sWildEncounterImmunitySteps++;

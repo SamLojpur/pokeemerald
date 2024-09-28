@@ -120,7 +120,7 @@ const struct Trainer gTrainers[] = {
         .aiFlags = AI_SCRIPT_CHECK_BAD_MOVE,
         .party = NO_ITEM_DEFAULT_MOVES(sParty_Gabrielle1),
     },
-
+    // test
     [TRAINER_GRUNT_PETALBURG_WOODS] =
     {
         .trainerClass = TRAINER_CLASS_TEAM_AQUA,
@@ -130,7 +130,7 @@ const struct Trainer gTrainers[] = {
         .items = {},
         .doubleBattle = FALSE,
         .aiFlags = AI_SCRIPT_CHECK_BAD_MOVE,
-        .party = NO_ITEM_DEFAULT_MOVES(sParty_GruntPetalburgWoods),
+        .party = ITEM_CUSTOM_MOVES(sParty_GruntPetalburgWoods),
     },
 
     [TRAINER_MARCEL] =
