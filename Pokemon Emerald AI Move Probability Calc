@@ -1,0 +1,32 @@
+Pokemon Emerald AI Move Probability Calculator - Project Plan
+Goal
+Build a tool that inputs current battle state and outputs move probabilities for the AI opponent. Must be fast enough for Monte Carlo simulations.
+
+Architecture Decision
+C backend + Web frontend
+
+Extract battle logic from Emerald decomp (not using Showdown)
+C backend for speed (microseconds per evaluation)
+Simple web UI for state input and probability visualization
+Optional: REST API if making it public
+Step 1: Extract Battle Logic from Decomp
+What to extract:
+CalculateBaseDamage() and dependencies (~500 lines)
+Type effectiveness tables (const arrays)
+Battle struct definitions (BattleMon, Pokemon, etc.)
+AI scoring functions from battle_ai_script_commands.c (few hundred lines)
+Battle state tracking (status, volatile conditions, field effects)
+Porting approach:
+Remove GBA-specific macros (EWRAM_DATA, IWRAM_DATA - just delete them)
+Convert globals to a BattleContext struct that gets passed around
+Replace GBA types (u8 → uint8_t, etc.)
+Replace RNG calls with standard C rand()
+No assembly needed - battle logic is pure C
+Output:
+Standalone C library that can evaluate moves given a battle state, with no emulator required.
+
+Step 2+: TBD
+API/server design
+Web frontend for input
+Monte Carlo simulation implementation
+Probability calculation and output formatting

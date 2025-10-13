@@ -473,6 +473,24 @@ static void HandleInputChooseMove(void)
     bool32 canSelectTarget = FALSE;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
 
+    #ifdef TEST_MODE
+    #include "test_runner.h"
+
+    // // At the START of the move selection handler:
+    // if (ShouldUseTestInput() && gActiveBattler == B_POSITION_PLAYER_LEFT)
+    // {
+    //     // Override cursor position
+    //     gMoveSelectionCursor[gActiveBattler] = GetTestMoveSlot();
+        
+    //     // Auto-confirm the move (simulate A button press)
+    //     PlaySE(SE_SELECT);
+    //     BtlController_EmitTwoReturnValues(BUFFER_B, 10, 
+    //         gMoveSelectionCursor[gActiveBattler] | (gMultiUsePlayerCursor << 8));
+    //     PlayerBufferExecCompleted();
+    //     return;
+    // }
+    #endif
+
     if (JOY_HELD(DPAD_ANY) && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A)
         gPlayerDpadHoldFrames++;
     else
@@ -2548,6 +2566,12 @@ static void PlayerHandlePrintString(void)
     gBattle_BG0_Y = 0;
     stringId = (u16 *)(&gBattleBufferA[gActiveBattler][2]);
     BufferStringBattle(*stringId);
+
+    #ifdef TEST_HEADLESS
+        PlayerBufferExecCompleted();
+        return;
+    #endif
+
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MSG);
     gBattlerControllerFuncs[gActiveBattler] = CompleteOnInactiveTextPrinter2;
     BattleTv_SetDataBasedOnString(*stringId);

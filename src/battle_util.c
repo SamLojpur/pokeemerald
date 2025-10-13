@@ -282,6 +282,21 @@ void HandleAction_UseMove(void)
     }
     else
     {
+        // gBattleMons[gBattlerTarget].statStages[STAT_DEF] = 8;
+        // gBattleMons[gActiveBattler].statStages[STAT_ATK] = 8;
+
+        // u16 attack = (&gBattleMons[gBattlerAttacker])->attack;
+        // u16 defense = (&gBattleMons[gBattlerAttacker])->defense;
+        // u16 spAttack = (&gBattleMons[gBattlerAttacker])->spAttack;
+        // u16 spDefense = (&gBattleMons[gBattlerAttacker])->spDefense;
+
+        // u16 attackT = (&gBattleMons[gBattlerTarget])->attack;
+        // u16 defenseT = (&gBattleMons[gBattlerTarget])->defense;
+        // u16 spAttackT = (&gBattleMons[gBattlerTarget])->spAttack;
+        // u16 spDefenseT = (&gBattleMons[gBattlerTarget])->spDefense;
+        DebugPrintf("Attacker: Attack: %d Defence: %d SpAttack: %d SpDefence: %d", (&gBattleMons[gBattlerAttacker])->attack, (&gBattleMons[gBattlerAttacker])->defense, (&gBattleMons[gBattlerAttacker])->spAttack, (&gBattleMons[gBattlerAttacker])->spDefense);
+        DebugPrintf("Defender: Attack: %d Defence: %d SpAttack: %d SpDefence: %d", (&gBattleMons[gBattlerTarget])->attack, (&gBattleMons[gBattlerTarget])->defense, (&gBattleMons[gBattlerTarget])->spAttack, (&gBattleMons[gBattlerTarget])->spDefense);
+
         gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
     }
 

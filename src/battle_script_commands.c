@@ -1276,6 +1276,7 @@ static void Cmd_critcalc(void)
     if (critChance >= ARRAY_COUNT(sCriticalHitChance))
         critChance = ARRAY_COUNT(sCriticalHitChance) - 1;
 
+    // gCritMultiplier is set here
     if ((gBattleMons[gBattlerTarget].ability != ABILITY_BATTLE_ARMOR && gBattleMons[gBattlerTarget].ability != ABILITY_SHELL_ARMOR)
      && !(gStatuses3[gBattlerAttacker] & STATUS3_CANT_SCORE_A_CRIT)
      && !(gBattleTypeFlags & (BATTLE_TYPE_WALLY_TUTORIAL | BATTLE_TYPE_FIRST_BATTLE))
@@ -1300,6 +1301,8 @@ static void Cmd_damagecalc(void)
     if (gProtectStructs[gBattlerAttacker].helpingHand)
         gBattleMoveDamage = gBattleMoveDamage * 15 / 10;
 
+    
+    DebugPrintf("Move %S damage: %d",gMoveNames[gCurrentMove], gBattleMoveDamage);
     gBattlescriptCurrInstr++;
 }
 
@@ -1316,6 +1319,7 @@ void AI_CalcDmg(u8 attacker, u8 defender)
         gBattleMoveDamage *= 2;
     if (gProtectStructs[attacker].helpingHand)
         gBattleMoveDamage = gBattleMoveDamage * 15 / 10;
+    DebugPrintf("AI Move damage: %d",gBattleMoveDamage);
 }
 
 static void ModulateDmgByType(u8 multiplier)
@@ -1639,7 +1643,9 @@ u8 AI_TypeCalc(u16 move, u16 targetSpecies, u8 targetAbility)
 static inline void ApplyRandomDmgMultiplier(void)
 {
     u16 rand = Random();
-    u16 randPercent = 100 - (rand % 16);
+    // u16 randPercent = 100 - (rand % 16);
+    u16 randPercent = 100;
+    // u16 randPercent = 85;
 
     if (gBattleMoveDamage != 0)
     {
@@ -1695,6 +1701,9 @@ static void Cmd_adjustnormaldamage(void)
         }
     }
     gBattlescriptCurrInstr++;
+
+    DebugPrintf("Post AdjustMove %S, damageMin: %d damageMax: %d",gMoveNames[gCurrentMove], gBattleMoveDamage*85/100, gBattleMoveDamage);
+
 }
 
 // The same as adjustnormaldamage except it doesn't check for false swipe move effect.

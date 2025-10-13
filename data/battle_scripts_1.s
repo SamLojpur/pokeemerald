@@ -18,7 +18,7 @@
 
 .align 2
 gBattleScriptsForMoveEffects::
-	.4byte BattleScript_EffectHit                    @ EFFECT_HIT
+	.4byte BattleScript_EffectHit                    @ EFFECT_HIT# cool
 	.4byte BattleScript_EffectSleep                  @ EFFECT_SLEEP
 	.4byte BattleScript_EffectPoisonHit              @ EFFECT_POISON_HIT
 	.4byte BattleScript_EffectAbsorb                 @ EFFECT_ABSORB

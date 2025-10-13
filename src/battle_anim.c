@@ -205,9 +205,19 @@ void DoMoveAnim(u16 move)
     LaunchBattleAnimation(gBattleAnims_Moves, move, TRUE);
 }
 
+static void Nop(void)
+{
+}
+
 void LaunchBattleAnimation(const u8 *const animsTable[], u16 tableId, bool8 isMoveAnim)
 {
     s32 i;
+
+    #ifdef TEST_HEADLESS
+        gAnimScriptCallback = Nop;
+        gAnimScriptActive = FALSE;
+        return;
+    #endif
 
     if (!IsContest())
     {

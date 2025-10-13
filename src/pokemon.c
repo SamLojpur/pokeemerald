@@ -3111,6 +3111,12 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     u8 attackerHoldEffect;
     u8 attackerHoldEffectParam;
 
+    // statStages set right before damage
+    // attacker->statStages[STAT_ATK] = 8;
+    // gBattleWeather = B_WEATHER_RAIN_TEMPORARY;
+
+    
+
     if (!powerOverride)
         gBattleMovePower = gBattleMoves[move].power;
     else

@@ -23,7 +23,11 @@
 #include "intro.h"
 #include "main.h"
 #include "trainer_hill.h"
+#include "test_runner.h"
 #include "constants/rgb.h"
+// #ifdef TEST_MODE
+#include "test_runner.h"
+// #endif
 
 static void VBlankIntr(void);
 static void HBlankIntr(void);
@@ -180,7 +184,11 @@ static void InitMainCallbacks(void)
     gTrainerHillVBlankCounter = NULL;
     gMain.vblankCounter2 = 0;
     gMain.callback1 = NULL;
-    SetMainCallback2(CB2_InitCopyrightScreenAfterBootup);
+    #ifdef TEST_MODE
+        SetMainCallback2(CB2_TestRunner);
+    #else
+        SetMainCallback2(CB2_InitCopyrightScreenAfterBootup);
+    #endif
     gSaveBlock2Ptr = &gSaveblock2.block;
     gPokemonStoragePtr = &gPokemonStorage.block;
 }
@@ -250,6 +258,16 @@ void InitKeys(void)
 static void ReadKeys(void)
 {
     u16 keyInput = REG_KEYINPUT ^ KEYS_MASK;
+
+#ifdef TEST_MODE
+    // Advance frame counter and check for scheduled input
+    AdvanceInputFrame();
+    if (HasScheduledInput())
+    {
+        keyInput = GetScheduledInput();
+    }
+#endif
+
     gMain.newKeysRaw = keyInput & ~gMain.heldKeysRaw;
     gMain.newKeys = gMain.newKeysRaw;
     gMain.newAndRepeatedKeys = gMain.newKeysRaw;
