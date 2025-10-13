@@ -35,6 +35,9 @@
 #include "constants/songs.h"
 #include "constants/trainers.h"
 #include "constants/rgb.h"
+#ifdef TEST_MODE
+#include "test_runner.h"
+#endif
 
 static void PlayerHandleGetMonData(void);
 static void PlayerHandleSetMonData(void);
@@ -234,6 +237,10 @@ static void HandleInputChooseAction(void)
 {
     u16 itemId = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 8);
 
+    #ifdef TEST_MODE
+    TestRunner_Battle_SetReadyForInput();  // Signal we're ready for input
+    #endif
+
     DoBounceEffect(gActiveBattler, BOUNCE_HEALTHBOX, 7, 1);
     DoBounceEffect(gActiveBattler, BOUNCE_MON, 7, 1);
 
@@ -340,6 +347,11 @@ static void HandleInputChooseTarget(void)
 {
     s32 i;
     u8 identities[MAX_BATTLERS_COUNT];
+
+    #ifdef TEST_MODE
+    TestRunner_Battle_SetReadyForInput();  // Signal we're ready for input
+    #endif
+
     memcpy(identities, sTargetIdentities, ARRAY_COUNT(sTargetIdentities));
 
     DoBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX, 15, 1);
@@ -474,21 +486,7 @@ static void HandleInputChooseMove(void)
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
 
     #ifdef TEST_MODE
-    #include "test_runner.h"
-
-    // // At the START of the move selection handler:
-    // if (ShouldUseTestInput() && gActiveBattler == B_POSITION_PLAYER_LEFT)
-    // {
-    //     // Override cursor position
-    //     gMoveSelectionCursor[gActiveBattler] = GetTestMoveSlot();
-        
-    //     // Auto-confirm the move (simulate A button press)
-    //     PlaySE(SE_SELECT);
-    //     BtlController_EmitTwoReturnValues(BUFFER_B, 10, 
-    //         gMoveSelectionCursor[gActiveBattler] | (gMultiUsePlayerCursor << 8));
-    //     PlayerBufferExecCompleted();
-    //     return;
-    // }
+    TestRunner_Battle_SetReadyForInput();  // Signal we're ready for input
     #endif
 
     if (JOY_HELD(DPAD_ANY) && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A)

@@ -255,18 +255,16 @@ void InitKeys(void)
     gMain.newKeysRaw = 0;
 }
 
+// In ReadKeys function:
 static void ReadKeys(void)
 {
     u16 keyInput = REG_KEYINPUT ^ KEYS_MASK;
-
-#ifdef TEST_MODE
-    // Advance frame counter and check for scheduled input
-    AdvanceInputFrame();
+    #ifdef TEST_MODE
     if (HasScheduledInput())
     {
         keyInput = GetScheduledInput();
     }
-#endif
+    #endif
 
     gMain.newKeysRaw = keyInput & ~gMain.heldKeysRaw;
     gMain.newKeys = gMain.newKeysRaw;
